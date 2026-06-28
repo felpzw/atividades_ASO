@@ -65,8 +65,8 @@ int main(){
 
     pthread_mutex_init(&mutex, NULL);
 
-    ThreadArgs args1 = {x, 2, end1, &thread2, &global_is_prime};
-    ThreadArgs args2 = {x, start2, end2, &thread1, &global_is_prime};
+    ThreadArgs args1 = {x, start1, end1, &thread2};
+    ThreadArgs args2 = {x, start2, end2, &thread1};
 
     pthread_mutex_lock(&mutex);
 
@@ -80,12 +80,7 @@ int main(){
 
     pthread_mutex_destroy(&mutex);
 
-    if (global_is_prime) {
-        printf("O valor %ld é primo\n", x);
-    } else {
-        printf("O valor %ld não é primo\n", x);
-    }
+    printf("%d\n", global_is_prime);
 
-
-    return global_is_prime;
+    return 0;
     }
