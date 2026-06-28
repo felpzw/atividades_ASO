@@ -25,6 +25,7 @@ Aviso: não use as chamadas semget e semop disponível em <sys/sem.h>.
 #include <semaphore.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <time.h>
 
 
 #define tempo_aleatorio() (rand() % 10 + 1) //ENTRE 1 E 10 SEGS
@@ -45,15 +46,16 @@ void criar_processos(int nprocs) {
         if (pid < 0) {
             printf("Ocorreu algum erro\n");
             exit(1);
-        } else if (pid == 0) { 
+        } else if (pid == 0) {
+            srand(time(NULL) ^ getpid()); //semente por filho p/ tempos distintos
             sleep(tempo_aleatorio());
 
             sem_wait(sem);
             (*id)++; //ponteiro do id avanc 1 casa INTEIRA para o prox id
-            printf("Processo %d criado\n", *id); 
+            printf("Processo %d criado\n", *id);
             sem_post(sem);
 
-            exit(1);
+            exit(0);
         }
     }
 
@@ -66,9 +68,10 @@ void criar_processos(int nprocs) {
     sem_unlink("/semaforo");
 }
 
-void main() {
+int main() {
     int nprocs;
     printf("Digite a quantidade de processos a serem criados: ");
+    fflush(stdout); //esvazia o buffer antes do fork p/ nao duplicar o prompt
     scanf("%d", &nprocs);
 
     if (nprocs <= 0) {
@@ -77,6 +80,7 @@ void main() {
     }
 
     criar_processos(nprocs);
+    return 0;
 }
 
 
