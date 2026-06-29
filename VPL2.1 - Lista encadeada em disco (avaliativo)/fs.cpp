@@ -30,6 +30,26 @@ void adiciona(std::string arquivoDaLista, std::string novoNome, std::string depo
         if (uso == 0) { offsetLivre = offset; break; }
     }
     if (offsetLivre < 0) return;
+
+    // procura o no de referencia
+    int offsetZ = -1;
+    int proxDeZ = -1;
+    for (int i = 0; i < numBlocos; i++) {
+        int offset = 4 + i * TAM_NO;
+        int uso = 0;
+        char nome[TAM_NOME + 1] = {0};
+        int prox = 0;
+        arq.seekg(offset, std::ios::beg);
+        arq.read((char *)&uso, 4);
+        arq.read(nome, TAM_NOME);
+        arq.read((char *)&prox, 4);
+        if (uso == 1 && depoisDesteNome == std::string(nome)) {
+            offsetZ = offset;
+            proxDeZ = prox;
+            break;
+        }
+    }
+    if (offsetZ < 0) return;
 }
 
 #endif /* fs_h */
