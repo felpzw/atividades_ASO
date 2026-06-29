@@ -19,6 +19,17 @@ void adiciona(std::string arquivoDaLista, std::string novoNome, std::string depo
     arq.seekg(0, std::ios::end);
     long tamArquivo = arq.tellg();
     int numBlocos = (tamArquivo - 4) / TAM_NO;
+
+    // procura um bloco livre
+    int offsetLivre = -1;
+    for (int i = 0; i < numBlocos; i++) {
+        int offset = 4 + i * TAM_NO;
+        int uso = 0;
+        arq.seekg(offset, std::ios::beg);
+        arq.read((char *)&uso, 4);
+        if (uso == 0) { offsetLivre = offset; break; }
+    }
+    if (offsetLivre < 0) return;
 }
 
 #endif /* fs_h */
