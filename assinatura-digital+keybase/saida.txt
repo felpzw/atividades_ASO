@@ -1,0 +1,39 @@
+1- Se você ainda não possui uma conta no keybase.io, crie uma seguindo as instruções do site.
+
+2 - Utilize a aplicação web https://keybase.io/encrypt para CIFRAR e ASSINAR uma mensagem para o destinatário gagliotti (perfil disponível em https://keybase.io/gagliotti). Você escolhe conteúdo da mensagem.
+
+3 - Salve o resultado (a mensagem cifrada e assinada) em um arquivo .txt e submeta-o como resposta desta tarefa.
+
+O conteúdo do arquivo .txt deve ser algo parecido com o seguinte:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.17
+Comment: https://keybase.io/crypto
+
+wcFMA92Xdcl5WiJ4AQ/+K2i6j+KZtIXsbNDwSLIARbr5yaL+XwkSYzIwzSXXcQNO
+L/ZWmtjO7FDZhM+8qhdZWHdSuZ8Kkvn8uMO6UIzgWwMbBWhF5h0ZnNzL0dtpg0fx
+FI922waoFo+hUU8TT8T2JblUgqoIyM/2EP0KngprRr0dOsSts1JqnYAsPqk8PkqH
+F4xMCGyhvbx7mkJAxaiqxn9g/2qYtutmpVzMjC8Hyqp0Dd+J9JYWtv8etObAuDNv
+dW+nlDlr5FN3vngJcUbTO2oB6e9q+Qh1zsyrOjUz99SrClBjvpMvqY5lkJlZW4hB
+JzKi8/29x0WFmu66rRdnuEpcTFeChF47U1a94xsCmmBIII73dux0Chbn1j/0QmZa
+DBm7UOFZKmfojGCFixhRWk11k6NzYiQZ/pKOuxeccryl9Bo+jkK9+IS+JS10/CVI
+WCiPMaautneZwMjfO2RN/VCjMLC6MN2ZKBxvH92Ia4dqyO13LTBIPnDVojvW3PX8
+OpJYGFih2GoBGFnicMEyagMGOkoXveByxx/0paYUVY9ExD35Yf0bJTq9bc/90f4D
+wlRi0zPr2n1rtIL/IOXLza9cKUhllS9hRu/wtjYSspUlUaCuEEPscU8RBKB4s9Fm
+GDS6C4ukq1zqexRSyAYLgeyEdFd8Nr6GdjtAzIRkdBm/0UQuQtxgw5CKg24aOhHB
+wEwDTsBCOlrm/HIBB/4kFpQ/TcD5V37L1q+DXqlpNO5rEsrl8oKFnBFPpMBOudxG
+8dMxCPU0Vm3wkCEBaPe+HNFcVZ0kslIqH2higd8wrQqVA/zHJ83aIoNcwKYo1GW9
+64+drRPq15joccZmYyLuffH4Z48J3gj270ABr1KB+AhrOSSM0vi4wX8Bra49uUk8
+BHeC79j3Q8Qbtu4BdxmaAoBBoFHLt4FCiVNA6mGXKUBEkMNITfBUPndBCCgzsF4Q
+N/8dG5GovvZAqwlyd6IjIikv+hfMoLiAWPvKkN3tjYSoBxWpzLslCKcJhBZRN8c9
+2OeANOvZwNxgeW7OXX5NgDKE2mQiUwWw8bs9GJBH0sCzAS8whEyi5wnoyFe6DgDD
+FYBEqybbCm2Km4gR8d/+p+HWOtrb6ZT2C4nSlms5pkiskeOaLCeIFFqUVYsCAcsv
+lNLTacCPdeHaOXP06hOgW44lQdVsvAfAYxCcT9j8DyGYQo5f99WcUhv3j8GpRHso
+P5gu38XC2FO1SB+sEwshTkiCC+1J+/ibICzI7Pew+dKtbRgmmm6l09b37mtp+rky
+9Su0dTvQ20ZZWTGH5welwsIQTG9K91wOLNkBR5R9ozX2olNZ3BfqpBydZmVAjsju
+nY39nIJH2Jwg+3K7eEoCRe/DZsfiTLoZoVxUjYiVkY4XJ7psYJloWekFl6DKBBt3
+A3Adt/a3UZ1f9pcJM0f3pyciGWviwtuKlBqtPB2fy3hBxJ7iglvReVTdjT8cvRhG
+HQvs3vicyPHYEaSbrxHYbRNDSnTxXzwK24bu/NN5PTem43taPVhje7i/AQ9Veem4
+wDJoyHUmuSmrC7y6/T7yv8dgwCU=
+=WeKN
+-----END PGP MESSAGE-----
