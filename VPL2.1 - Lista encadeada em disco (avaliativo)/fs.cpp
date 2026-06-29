@@ -1,6 +1,7 @@
 #ifndef fs_h
 #define fs_h
 #include <string>
+#include <fstream>
 
 /**
  * @param arquivoDaLista nome do arquivo em disco que contem a lista encadeada
@@ -9,7 +10,15 @@
  */
 void adiciona(std::string arquivoDaLista, std::string novoNome, std::string depoisDesteNome)
 {
-    //implemente aqui
+    const int TAM_NO = 28;
+    const int TAM_NOME = 20;
+
+    // abre o arquivo e conta os blocos
+    std::fstream arq(arquivoDaLista, std::ios::in | std::ios::out | std::ios::binary);
+    if (!arq) return;
+    arq.seekg(0, std::ios::end);
+    long tamArquivo = arq.tellg();
+    int numBlocos = (tamArquivo - 4) / TAM_NO;
 }
 
 #endif /* fs_h */
