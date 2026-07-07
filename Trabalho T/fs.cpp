@@ -165,6 +165,32 @@ static int procuraInode(std::fstream &arq, const Geometria &g, const std::string
     return atual;
 }
 
+// registra um filho no diretorio pai: incrementa SIZE e grava o indice do filho
+// no primeiro byte livre dos blocos do pai (alocando um novo bloco se preciso)
+static void adicionaFilho(std::fstream &arq, const Geometria &g, int idxPai, int idxFilho)
+{
+    INODE pai = leInode(arq, g, idxPai);
+    int posicao = (unsigned char)pai.SIZE;
+    int capacidade = blocosUsados(g, pai) * g.tamBloco;
+    if (posicao == capacidade)
+        pai.DIRECT_BLOCKS[posicao / g.tamBloco] = alocaBloco(arq, g);
+    gravaByteDoInode(arq, g, pai, posicao, (unsigned char)idxFilho);
+    pai.SIZE++;
+    gravaInode(arq, g, idxPai, pai);
+}
+
+// monta um inode novo com nome preenchido e demais campos zerados
+static INODE montaInode(const std::string &nome, int isDir, int tamanho)
+{
+    INODE ino{};
+    ino.IS_USED = 0x01;
+    ino.IS_DIR = (unsigned char)isDir;
+    ino.SIZE = (char)tamanho;
+    for (int i = 0; i < 10 && i < (int)nome.size(); i++)
+        ino.NAME[i] = nome[i];
+    return ino;
+}
+
 /**
  * @brief Inicializa um sistema de arquivos que simula EXT3
  * @param fsFileName nome do arquivo que contém sistema de arquivos que simula EXT3 (caminho do arquivo no sistema de arquivos local)
@@ -212,10 +238,56 @@ void initFs(std::string fsFileName, int blockSize, int numBlocks, int numInodes)
 
 void addFile(std::string fsFileName, std::string filePath, std::string fileContent)
 {
+    std::fstream arq(fsFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!arq) return;
+    Geometria g = leGeometria(arq);
+
+    // separa o diretorio pai do nome do arquivo
+    std::vector<std::string> partes = divideCaminho(filePath);
+    std::string nome = partes.back();
+    std::string caminhoPai = filePath.substr(0, filePath.size() - nome.size());
+    int idxPai = procuraInode(arq, g, caminhoPai);
+    if (idxPai < 0) return;
+
+    int idxNovo = procuraInodeLivre(arq, g);
+    if (idxNovo < 0) return;
+
+    // aloca os blocos necessarios e grava o conteudo neles
+    INODE novo = montaInode(nome, 0, fileContent.size());
+    int numBlocosArquivo = (int)std::ceil(fileContent.size() / (double)g.tamBloco);
+    for (int i = 0; i < numBlocosArquivo; i++)
+        novo.DIRECT_BLOCKS[i] = alocaBloco(arq, g);
+    for (int i = 0; i < (int)fileContent.size(); i++)
+        gravaByteDoInode(arq, g, novo, i, fileContent[i]);
+
+    gravaInode(arq, g, idxNovo, novo);
+    adicionaFilho(arq, g, idxPai, idxNovo);
+    arq.close();
 }
 
 void addDir(std::string fsFileName, std::string dirPath)
 {
+    std::fstream arq(fsFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!arq) return;
+    Geometria g = leGeometria(arq);
+
+    // separa o diretorio pai do nome do novo diretorio
+    std::vector<std::string> partes = divideCaminho(dirPath);
+    std::string nome = partes.back();
+    std::string caminhoPai = dirPath.substr(0, dirPath.size() - nome.size());
+    int idxPai = procuraInode(arq, g, caminhoPai);
+    if (idxPai < 0) return;
+
+    int idxNovo = procuraInodeLivre(arq, g);
+    if (idxNovo < 0) return;
+
+    // todo diretorio recem criado recebe um bloco vazio, mesmo sem filhos
+    INODE novo = montaInode(nome, 1, 0);
+    novo.DIRECT_BLOCKS[0] = alocaBloco(arq, g);
+
+    gravaInode(arq, g, idxNovo, novo);
+    adicionaFilho(arq, g, idxPai, idxNovo);
+    arq.close();
 }
 
 void remove(std::string fsFileName, std::string path)
