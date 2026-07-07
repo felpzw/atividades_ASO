@@ -290,8 +290,60 @@ void addDir(std::string fsFileName, std::string dirPath)
     arq.close();
 }
 
+// retira um filho da lista do pai: desloca os indices seguintes para a esquerda,
+// decrementa SIZE e libera no mapa de bits o bloco do pai que ficou vazio
+static void removeFilho(std::fstream &arq, const Geometria &g, int idxPai, int idxFilho)
+{
+    INODE pai = leInode(arq, g, idxPai);
+    int numFilhos = (unsigned char)pai.SIZE;
+
+    int k = 0;
+    while (k < numFilhos && leByteDoInode(arq, g, pai, k) != idxFilho)
+        k++;
+    for (int j = k; j < numFilhos - 1; j++)
+        gravaByteDoInode(arq, g, pai, j, leByteDoInode(arq, g, pai, j + 1));
+
+    int blocosAntes = blocosUsados(g, pai);
+    pai.SIZE--;
+    if (blocosUsados(g, pai) < blocosAntes)
+        marcaBloco(arq, g, pai.DIRECT_BLOCKS[blocosAntes - 1], 0);
+    gravaInode(arq, g, idxPai, pai);
+}
+
+// apaga um inode e seus descendentes: libera os blocos no mapa de bits e zera
+// IS_USED, deixando os demais campos e o conteudo dos blocos como lixo
+static void apagaRecursivo(std::fstream &arq, const Geometria &g, int indice)
+{
+    INODE ino = leInode(arq, g, indice);
+
+    if (ino.IS_DIR) {
+        std::vector<int> filhos;
+        for (int i = 0; i < (unsigned char)ino.SIZE; i++)
+            filhos.push_back(leByteDoInode(arq, g, ino, i));
+        for (int filho : filhos)
+            apagaRecursivo(arq, g, filho);
+    }
+
+    for (int i = 0; i < blocosUsados(g, ino); i++)
+        marcaBloco(arq, g, ino.DIRECT_BLOCKS[i], 0);
+
+    ino.IS_USED = 0x00;
+    gravaInode(arq, g, indice, ino);
+}
+
 void remove(std::string fsFileName, std::string path)
 {
+    std::fstream arq(fsFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!arq) return;
+    Geometria g = leGeometria(arq);
+
+    int idxPai = -1;
+    int indice = procuraInode(arq, g, path, &idxPai);
+    if (indice <= 0) return; // nao achou ou tentou remover a raiz
+
+    apagaRecursivo(arq, g, indice);
+    removeFilho(arq, g, idxPai, indice);
+    arq.close();
 }
 
 void move(std::string fsFileName, std::string oldPath, std::string newPath)
