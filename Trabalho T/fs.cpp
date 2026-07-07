@@ -1,5 +1,5 @@
 /**
- * Implemente aqui as funções dos sistema de arquivos que simula EXT3
+ * Sistema de arquivos que simula EXT3 (funções declaradas em fs.h)
  */
 
 #include "fs.h"
@@ -191,13 +191,6 @@ static INODE montaInode(const std::string &nome, int isDir, int tamanho)
     return ino;
 }
 
-/**
- * @brief Inicializa um sistema de arquivos que simula EXT3
- * @param fsFileName nome do arquivo que contém sistema de arquivos que simula EXT3 (caminho do arquivo no sistema de arquivos local)
- * @param blockSize tamanho em bytes do bloco
- * @param numBlocks quantidade de blocos
- * @param numInodes quantidade de inodes
- */
 void initFs(std::string fsFileName, int blockSize, int numBlocks, int numInodes)
 {
     std::ofstream arq(fsFileName, std::ios::out | std::ios::binary | std::ios::trunc);
@@ -213,7 +206,6 @@ void initFs(std::string fsFileName, int blockSize, int numBlocks, int numInodes)
     mapa[0] = 0x01;
     arq.write(mapa.data(), tamMapa);
 
-    // vetor de inodes: inode 0 e o diretorio raiz "/", os demais ficam livres
     INODE raiz{};
     raiz.IS_USED = 0x01;
     raiz.IS_DIR = 0x01;
