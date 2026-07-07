@@ -1,5 +1,5 @@
 /**
- * Sistema de arquivos que simula EXT3 (funções declaradas em fs.h)
+ * Sistema de arquivos que simula EXT3
  */
 
 #include "fs.h"
