@@ -291,7 +291,8 @@ void addDir(std::string fsFileName, std::string dirPath)
 }
 
 // retira um filho da lista do pai: desloca os indices seguintes para a esquerda,
-// decrementa SIZE e libera no mapa de bits o bloco do pai que ficou vazio
+// decrementa SIZE e desocupa o bloco do pai que ficou vazio (libera no mapa de
+// bits e zera o ponteiro em DIRECT_BLOCKS)
 static void removeFilho(std::fstream &arq, const Geometria &g, int idxPai, int idxFilho)
 {
     INODE pai = leInode(arq, g, idxPai);
@@ -305,8 +306,10 @@ static void removeFilho(std::fstream &arq, const Geometria &g, int idxPai, int i
 
     int blocosAntes = blocosUsados(g, pai);
     pai.SIZE--;
-    if (blocosUsados(g, pai) < blocosAntes)
+    if (blocosUsados(g, pai) < blocosAntes) {
         marcaBloco(arq, g, pai.DIRECT_BLOCKS[blocosAntes - 1], 0);
+        pai.DIRECT_BLOCKS[blocosAntes - 1] = 0;
+    }
     gravaInode(arq, g, idxPai, pai);
 }
 
@@ -348,4 +351,33 @@ void remove(std::string fsFileName, std::string path)
 
 void move(std::string fsFileName, std::string oldPath, std::string newPath)
 {
+    std::fstream arq(fsFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!arq) return;
+    Geometria g = leGeometria(arq);
+
+    int idxPai = -1;
+    int indice = procuraInode(arq, g, oldPath, &idxPai);
+    if (indice <= 0) return;
+
+    // separa o novo diretorio pai do novo nome
+    std::vector<std::string> partes = divideCaminho(newPath);
+    std::string novoNome = partes.back();
+    std::string caminhoPaiNovo = newPath.substr(0, newPath.size() - novoNome.size());
+    int idxPaiNovo = procuraInode(arq, g, caminhoPaiNovo);
+    if (idxPaiNovo < 0) return;
+
+    // se trocou de diretorio, remove do pai antigo e adiciona no novo
+    if (idxPaiNovo != idxPai) {
+        removeFilho(arq, g, idxPai, indice);
+        adicionaFilho(arq, g, idxPaiNovo, indice);
+    }
+
+    // se o nome mudou, atualiza NAME
+    INODE ino = leInode(arq, g, indice);
+    if (nomeDoInode(ino) != novoNome) {
+        for (int i = 0; i < 10; i++)
+            ino.NAME[i] = (i < (int)novoNome.size()) ? novoNome[i] : '\0';
+        gravaInode(arq, g, indice, ino);
+    }
+    arq.close();
 }
